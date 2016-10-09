@@ -25,7 +25,7 @@
     {
       "type": "chef-solo",
       "cookbook_paths": ["cookbooks"],
-      "run_list": ["webserver::httpd"]
+      "run_list": ["webserver::apache"]
     }
   ]
 }
