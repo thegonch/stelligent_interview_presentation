@@ -13,12 +13,16 @@ PREREQUISITES:
 - Berkshelf local install
 - Jenkins server with installs of Packer and AWS CLI
 
-To execute Test Kitchen runs for all OS, execute this from the cookbooks/<role> folder:
+To execute Test Kitchen runs for all OS, execute this from the cookbooks/[role] folder (where role can be webserver, git, etc.):
 ```
 kitchen test
 ```
 
-Committing code to this Github repository will trigger the Jenkins build for Packer and AWS Cloud Formationsdasgsgae
+This is also designed to be run against a specific OS, and in particular for Amazon Linux, against a particular AMI to allow the kitchen-ec2 driver to work for Amazon Linux.  So please note, that this is defaulted to us-east-1 AMI and should be adjusted accordingly as needed.
+
+You can append the above command with either ubuntu, centos, or amazon-linux, for example, to run just those base OS tests.
+
+Committing code to this Github repository will trigger the Jenkins build for Packer and AWS Cloud Formation.
 
 Below is the Jenkins job that executes the Packer and Cloud Formation steps.
 
