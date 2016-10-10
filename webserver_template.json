@@ -8,7 +8,7 @@
     "InstanceType" : {
       "Description" : "WebServer EC2 instance type",
       "Type" : "String",
-      "Default" : "m1.small",
+      "Default" : "t2.micro",
       "AllowedValues" : [ "t1.micro", "t2.micro", "t2.small", "t2.medium", "m1.small", "m1.medium", "m1.large", "m1.xlarge", "m2.xlarge",
 "m2.2xlarge", "m2.4xlarge", "m3.medium", "m3.large", "m3.xlarge", "m3.2xlarge", "c1.medium", "c1.xlarge", "c3.large", "c3.xlarge", "c3.2xlarge",
 "c3.4xlarge", "c3.8xlarge", "g2.2xlarge", "r3.large", "r3.xlarge", "r3.2xlarge", "r3.4xlarge", "r3.8xlarge", "i2.xlarge", "i2.2xlarge", "i2.4xlarge",
@@ -31,6 +31,13 @@
       "Type": "String",
       "Default" : "",
       "ConstraintDescription" : "must be the name of an existing EC2 KeyPair or default empty."
+    },
+
+    "ImageId" : {
+      "Description" : " Name of an existing AMI ID to build up the stack",
+      "Type": "String",
+      "Default" : "",
+      "ConstraintDescription": "Must be the name of a pre-existing AMI or default empty (will then be based on the InstanceType to a base AMI of Amazon-Linux)."
     }
   },
 
@@ -89,7 +96,8 @@
   },
 
   "Conditions" : {
-    "UseKeyPair" : {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "KeyName"}]}]}
+    "UseKeyPair" : {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "KeyName"}]}]},
+    "UseImageId" : {"Fn::Not": [{"Fn::Equals": ["", {"Ref": "ImageId"}]}]}
   },
   
   "Resources" : {   
@@ -272,27 +280,7 @@
         "Comment" : "Install a simple web application",
         "AWS::CloudFormation::Init" : {
           "config" : {
-            "packages" : {
-              "yum" : {
-                "httpd"             : []
-              }
-            },
-
             "files" : {
-
-              "/var/www/html/index.html" : {
-                "content" : { "Fn::Join" : ["\n", [
-                 "<!DOCTYPE html>",
-                 "<html>",
-                 "<body>",
-		 "<h1>Automation for the People</h1>",
-                 "</body>",
-                 "</html>"
-                ]]},
-                "mode"    : "000644",
-                "owner"   : "apache",
-                "group"   : "apache"
-              },
 
               "/etc/cfn/cfn-hup.conf" : {
                 "content" : { "Fn::Join" : ["", [
@@ -319,7 +307,6 @@
 
             "services" : {
               "sysvinit" : {
-                "httpd"    : { "enabled" : "true", "ensureRunning" : "true" },
                 "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
                     "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
               }
@@ -329,8 +316,13 @@
       },
 
       "Properties": {
-        "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
-                          { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
+        "ImageId" : {
+          "Fn::If" : [
+            "UseImageId",
+            { "Ref" : "ImageId" },
+            { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" }, { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] }
+          ]
+        },  
         "InstanceType"   : { "Ref" : "InstanceType" },
         "KeyName" : {
           "Fn::If" : [

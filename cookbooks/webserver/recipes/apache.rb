@@ -1,5 +1,11 @@
 if node['platform'] == "ubuntu"
-  package "apache2"
+  package "apache2" do
+    action :install
+  end
+
+  service "apache2" do
+    action [ :enable, :start ]
+  end
 
   file '/var/www/html/index.html' do
     owner 'www-data'
@@ -9,13 +15,19 @@ if node['platform'] == "ubuntu"
     action :create
   end
 else
-  package "httpd"
+  package "httpd" do
+    action :install
+  end
+
+  service "httpd" do
+    action [ :enable, :start ]
+  end
 
   file '/var/www/html/index.html' do
     owner 'apache'
     group 'apache'
     mode '0644'
-    content 'Hello World, Stelligent!'
+    content '<html><h1>Hello World, Stelligent!</h1></html>'
     action :create
   end
 end
