@@ -51,3 +51,4 @@ aws cloudformation update-stack --stack-name ${aws_stack} --use-previous-templat
 
 rm build-$timestamp.log
 ```
+
