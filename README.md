@@ -4,8 +4,9 @@ Resources for building Chef cookbooks, Test Kitchen verification, and CloudForma
 This project contains the pieces necessary to use Chef cookbooks to build up an AWS EC2 AMI, verify the cookbooks with Serverspec testing executed with Test Kitchen against base OS images, have Packer bake the AMI and finally update a Cloud Formation template stack with the new AMI.
 
 PREREQUISITES:
+- Test Kitchen local install
 - AWS IAM user with full permissions to CloudFormation and EC2, whose credentials are configured for the AWS CLI
-- AWS KeyPair, to be adjusted if desired in the .kitchen.yml file, if desired for use for Test Kitchen
+- AWS KeyPair, to be adjusted in the .kitchen.yml file, for Test Kitchen, and if desired for use in the AMI
 - AWS VPC with a default security group allowing ports 80 and 22 open to the world, for Test Kitchen
 - AWS CLI local install
 - Serverspec local install

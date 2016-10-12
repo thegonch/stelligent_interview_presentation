@@ -370,6 +370,10 @@
     "WebsiteURL" : {
       "Description" : "Application URL",
       "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServerInstance", "PublicDnsName" ]}]] }
+    },
+    "WebsiteIP" : {
+      "Description" : "Public IP Address",
+      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServerInstance", "PublicIp" ]}]] }
     }
   }
 }
